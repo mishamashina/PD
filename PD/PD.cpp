@@ -12,7 +12,6 @@
 #include "Sphere.h"
 #include <windows.h>
 
-
 // GLUT CALLBACK functions
 void displayCB();
 void reshapeCB(int w, int h);
@@ -33,14 +32,14 @@ void drawString3D(const char *str, float pos[3], float color[4], void *font);
 void toOrtho();
 void toPerspective();
 GLuint loadTexture(const char* fileName, bool wrap=true);
-
+void showInfo();
 // constants
 const int   SCREEN_WIDTH    = 500;
 const int   SCREEN_HEIGHT   = 500;
 const float CAMERA_DISTANCE = 4.0f;
 const int   TEXT_WIDTH      = 8;
 const int   TEXT_HEIGHT     = 13;
-
+int i = -1;
 
 // global variables
 void *font = GLUT_BITMAP_8_BY_13;
@@ -57,36 +56,9 @@ int drawMode;
 GLuint texId;
 int imageWidth;
 int imageHeight;
-int i = 0;
 
-struct Button 
-{
-    std::string text = "Button";
-    bool isPressed = false;
-};
-
-Button myButton;
 // sphere: min sector = 3, min stack = 2
 Sphere sphere(1.0f, 36, 18, true,  2);    // radius, sectors, stacks, smooth(default), Y-up
-
-void drawButton(const Button& button, float x, float y, float width, float height) 
-{
-    // Рисуем фон кнопки
-    glBegin(GL_QUADS);
-    glColor3f(0.5f, 0.5f, 0.5f);
-    glVertex2f(x, y);
-    glVertex2f(x + width, y);
-    glVertex2f(x + width, y + height);
-    glVertex2f(x, y + height);
-    glEnd();
-
-    // Рисуем текст кнопки
-    glColor3f(1.0f, 1.0f, 1.0f);
-    glRasterPos2f(x + width / 2 - button.text.length() * 6, y + height / 2 - 8);
-    for (char c : button.text) {
-        glutBitmapCharacter(GLUT_BITMAP_8_BY_13, c);
-    }
-}
 
 ///////////////////////////////////////////////////////////////////////////////
 int main(int argc, char **argv)
@@ -98,14 +70,6 @@ int main(int argc, char **argv)
     // init GLUT and GL
     initGLUT(argc, argv);
     initGL();
-    //drawButton(myButton, 20, 20, 10, 10);
-    //std::cout << "Button";
-
-    // load BMP image
-    //texId = loadTexture("earth2048.bmp", true);
-    //texId = loadTexture("earth2048.bmp", true);
-    //drawButton(myButton, 2, 2, 1, 1);
-    //std::cout << "Button";
 
     // the last GLUT call (LOOP)
     // window will be shown and display callback is triggered by events
@@ -164,15 +128,10 @@ void initGL()
     // enable /disable features
     glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
     glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
-    //glHint(GL_POLYGON_SMOOTH_HINT, GL_NICEST);
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_LIGHTING);
     glEnable(GL_TEXTURE_2D);
     glEnable(GL_CULL_FACE);
-
-    // track material ambient and diffuse from surface color, call it before glEnable(GL_COLOR_MATERIAL)
-    //glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
-    //glEnable(GL_COLOR_MATERIAL);
 
     glClearColor(0, 0, 0, 0);                   // background color
     glClearStencil(0);                          // clear stencil buffer
@@ -253,11 +212,6 @@ bool initSharedMem()
 
     drawMode = 0; // 0:fill, 1: wireframe, 2:points
 
-    // change up axis to +Y
-    //sphere1.setUpAxis(2);
-    //sphere2.setUpAxis(2);
-
-    // debug
     sphere.printSelf();
 
     return true;
@@ -401,25 +355,79 @@ void showInfo()
     std::stringstream ss;
     ss << std::fixed << std::setprecision(3);
 
-    ss << "Sphere Radius: " << sphere.getRadius() << std::ends;
-    drawString(ss.str().c_str(), 1, screenHeight-TEXT_HEIGHT, color, font);
-    ss.str("");
+    if (i == 0)
+    {
+        ss << "Picture: " << "Earth_Daymap" << std::ends;
+        drawString(ss.str().c_str(), 1, screenHeight - (1 * TEXT_HEIGHT), color, font);
+        ss.str("");
+    }
+    if (i == 1)
+    {
+        ss << "Picture: " << "Earth_Nightmap" << std::ends;
+        drawString(ss.str().c_str(), 1, screenHeight - (1 * TEXT_HEIGHT), color, font);
+        ss.str("");
+    }
+    if (i == 2)
+    {
+        ss << "Picture: " << "Earth_Clouds" << std::ends;
+        drawString(ss.str().c_str(), 1, screenHeight - (1 * TEXT_HEIGHT), color, font);
+        ss.str("");
+    }
+    if (i == 3)
+    {
+        ss << "Picture: " << "Jupiter" << std::ends;
+        drawString(ss.str().c_str(), 1, screenHeight - (1 * TEXT_HEIGHT), color, font);
+        ss.str("");
+    }
+    if (i == 4)
+    {
+        ss << "Picture: " << "Mars" << std::ends;
+        drawString(ss.str().c_str(), 1, screenHeight - (1 * TEXT_HEIGHT), color, font);
+        ss.str("");
+    }
+    if (i == 5)
+    {
+        ss << "Picture: " << "Saturn" << std::ends;
+        drawString(ss.str().c_str(), 1, screenHeight - (1 * TEXT_HEIGHT), color, font);
+        ss.str("");
+    }
+    if (i == 6)
+    {
+        ss << "Picture: " << "Venus_Atmosphere" << std::ends;
+        drawString(ss.str().c_str(), 1, screenHeight - (1 * TEXT_HEIGHT), color, font);
+        ss.str("");
+    }
+    if (i == 7)
+    {
+        ss << "Picture: " <<"Venus_Surface" << std::ends;
+        drawString(ss.str().c_str(), 1, screenHeight - (1 * TEXT_HEIGHT), color, font);
+        ss.str("");
+    }
+    if (i == 8)
+    {
+        ss << "Picture: " << "Mercury" << std::ends;
+        drawString(ss.str().c_str(), 1, screenHeight - (1 * TEXT_HEIGHT), color, font);
+        ss.str("");
+    }
+    if (i == 9)
+    {
+        ss << "Picture: " << "Neptune" << std::ends;
+        drawString(ss.str().c_str(), 1, screenHeight - (1 * TEXT_HEIGHT), color, font);
+        ss.str("");
+    }
+    if (i == 10)
+    {
+        ss << "Picture: " << "Uranus" << std::ends;
+        drawString(ss.str().c_str(), 1, screenHeight - (1 * TEXT_HEIGHT), color, font);
+        ss.str("");
+    }
+    if (i == 11)
+    {
+        ss << "Picture: " << "Moon" << std::ends;
+        drawString(ss.str().c_str(), 1, screenHeight - (1 * TEXT_HEIGHT), color, font);
+        ss.str("");
+    }
 
-    ss << "Sector Count: " << sphere.getSectorCount() << std::ends;
-    drawString(ss.str().c_str(), 1, screenHeight-(2*TEXT_HEIGHT), color, font);
-    ss.str("");
-
-    ss << "Stack Count: " << sphere.getStackCount() << std::ends;
-    drawString(ss.str().c_str(), 1, screenHeight-(3*TEXT_HEIGHT), color, font);
-    ss.str("");
-
-    ss << "Vertex Count: " << sphere.getVertexCount() << std::ends;
-    drawString(ss.str().c_str(), 1, screenHeight-(4*TEXT_HEIGHT), color, font);
-    ss.str("");
-
-    ss << "Index Count: " << sphere.getIndexCount() << std::ends;
-    drawString(ss.str().c_str(), 1, screenHeight-(5*TEXT_HEIGHT), color, font);
-    ss.str("");
 
     // unset floating format
     ss << std::resetiosflags(std::ios_base::fixed | std::ios_base::floatfield);
@@ -520,10 +528,9 @@ void displayCB()
 
     glBindTexture(GL_TEXTURE_2D, 0);
 
-    showInfo();     // print max range of glDrawRangeElements
+    showInfo();    // print max range of glDrawRangeElements
 
     glPopMatrix();
-    drawButton(myButton, -0.5, 0, 1, 0.5);
     glutSwapBuffers();
 }
 
@@ -556,43 +563,57 @@ void timerCB(int millisec)
 
 void keyboardCB(unsigned char key, int x, int y)
 {
+    std::stringstream ss;
+    float color[4] = { 1, 1, 1, 1 };
     switch (key)
     {
     case '1':
         texId = loadTexture("earth_daymap.bmp", true);
+        i = 0;
         break;
     case '2':
         texId = loadTexture("earth_nightmap.bmp", true);
+        i = 1;
         break;
     case '3':
         texId = loadTexture("earth_clouds.bmp", true);
+        i = 2;
         break;
     case '4':
         texId = loadTexture("jupiter.bmp", true);
+        i = 3;
         break;
     case '5':
         texId = loadTexture("mars.bmp", true);
+        i = 4;
         break;
     case '6':
         texId = loadTexture("saturn.bmp", true);
+        i = 5;
         break;
     case '7':
         texId = loadTexture("venus_atmosphere.bmp", true);
+        i = 6;
         break;
     case '8':
         texId = loadTexture("venus_surface.bmp", true);
+        i = 7;
         break;
     case '9':
         texId = loadTexture("mercury.bmp", true);
+        i = 8;
         break;
     case '0':
         texId = loadTexture("neptune.bmp", true);
+        i = 9;
         break;
     case '-':
         texId = loadTexture("uranus.bmp", true);
+        i = 10;
         break;
     case '=':
         texId = loadTexture("moon.bmp", true);
+        i = 11;
         break;
     }
 }
