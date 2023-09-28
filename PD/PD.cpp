@@ -1,14 +1,3 @@
-///////////////////////////////////////////////////////////////////////////////
-// main.cpp
-// ========
-// drawing a sphere using vertex array (glDrawElements)
-// dependency: freeglut/glut
-//
-//  AUTHOR: Song Ho Ahn (song.ahn@gmail.com)
-// CREATED: 2017-11-02
-// UPDATED: 2023-03-14
-///////////////////////////////////////////////////////////////////////////////
-
 #ifdef __APPLE__
 #include <GLUT/glut.h>
 #else
@@ -28,9 +17,9 @@
 void displayCB();
 void reshapeCB(int w, int h);
 void timerCB(int millisec);
-void keyboardCB(unsigned char key, int x, int y);
 void mouseCB(int button, int stat, int x, int y);
 void mouseMotionCB(int x, int y);
+void keyboardCB(unsigned char key, int x, int y);
 
 void initGL();
 int  initGLUT(int argc, char **argv);
@@ -40,13 +29,13 @@ void initLights();
 void setCamera(float posX, float posY, float posZ, float targetX, float targetY, float targetZ);
 void drawString(const char *str, int x, int y, float color[4], void *font);
 void drawString3D(const char *str, float pos[3], float color[4], void *font);
+//void drawButton(const Button& button, float x, float y, float width, float height);
 void toOrtho();
 void toPerspective();
 GLuint loadTexture(const char* fileName, bool wrap=true);
 
-
 // constants
-const int   SCREEN_WIDTH    = 1500;
+const int   SCREEN_WIDTH    = 500;
 const int   SCREEN_HEIGHT   = 500;
 const float CAMERA_DISTANCE = 4.0f;
 const int   TEXT_WIDTH      = 8;
@@ -68,26 +57,55 @@ int drawMode;
 GLuint texId;
 int imageWidth;
 int imageHeight;
+int i = 0;
 
+struct Button 
+{
+    std::string text = "Button";
+    bool isPressed = false;
+};
+
+Button myButton;
 // sphere: min sector = 3, min stack = 2
-Sphere sphere1(1.0f, 36, 18, false, 2);    // radius, sectors, stacks, non-smooth (flat) shading, Y-up
-Sphere sphere2(1.0f, 36, 18, true,  2);    // radius, sectors, stacks, smooth(default), Y-up
+Sphere sphere(1.0f, 36, 18, true,  2);    // radius, sectors, stacks, smooth(default), Y-up
 
+void drawButton(const Button& button, float x, float y, float width, float height) 
+{
+    // Рисуем фон кнопки
+    glBegin(GL_QUADS);
+    glColor3f(0.5f, 0.5f, 0.5f);
+    glVertex2f(x, y);
+    glVertex2f(x + width, y);
+    glVertex2f(x + width, y + height);
+    glVertex2f(x, y + height);
+    glEnd();
 
+    // Рисуем текст кнопки
+    glColor3f(1.0f, 1.0f, 1.0f);
+    glRasterPos2f(x + width / 2 - button.text.length() * 6, y + height / 2 - 8);
+    for (char c : button.text) {
+        glutBitmapCharacter(GLUT_BITMAP_8_BY_13, c);
+    }
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 int main(int argc, char **argv)
 {
+
     // init global vars
     initSharedMem();
 
     // init GLUT and GL
     initGLUT(argc, argv);
     initGL();
+    //drawButton(myButton, 20, 20, 10, 10);
+    //std::cout << "Button";
 
     // load BMP image
     //texId = loadTexture("earth2048.bmp", true);
-    texId = loadTexture("earth2048.bmp", true);
+    //texId = loadTexture("earth2048.bmp", true);
+    //drawButton(myButton, 2, 2, 1, 1);
+    //std::cout << "Button";
 
     // the last GLUT call (LOOP)
     // window will be shown and display callback is triggered by events
@@ -120,11 +138,12 @@ int initGLUT(int argc, char **argv)
     // it returns a unique ID
     int handle = glutCreateWindow(argv[0]);     // param is the title of window
 
+
     // register GLUT callback functions
     glutDisplayFunc(displayCB);
     glutTimerFunc(33, timerCB, 33);             // redraw only every given millisec
-    glutReshapeFunc(reshapeCB);
     glutKeyboardFunc(keyboardCB);
+    glutReshapeFunc(reshapeCB);
     glutMouseFunc(mouseCB);
     glutMotionFunc(mouseMotionCB);
 
@@ -239,7 +258,7 @@ bool initSharedMem()
     //sphere2.setUpAxis(2);
 
     // debug
-    sphere2.printSelf();
+    sphere.printSelf();
 
     return true;
 }
@@ -382,23 +401,23 @@ void showInfo()
     std::stringstream ss;
     ss << std::fixed << std::setprecision(3);
 
-    ss << "Sphere Radius: " << sphere2.getRadius() << std::ends;
+    ss << "Sphere Radius: " << sphere.getRadius() << std::ends;
     drawString(ss.str().c_str(), 1, screenHeight-TEXT_HEIGHT, color, font);
     ss.str("");
 
-    ss << "Sector Count: " << sphere2.getSectorCount() << std::ends;
+    ss << "Sector Count: " << sphere.getSectorCount() << std::ends;
     drawString(ss.str().c_str(), 1, screenHeight-(2*TEXT_HEIGHT), color, font);
     ss.str("");
 
-    ss << "Stack Count: " << sphere2.getStackCount() << std::ends;
+    ss << "Stack Count: " << sphere.getStackCount() << std::ends;
     drawString(ss.str().c_str(), 1, screenHeight-(3*TEXT_HEIGHT), color, font);
     ss.str("");
 
-    ss << "Vertex Count: " << sphere2.getVertexCount() << std::ends;
+    ss << "Vertex Count: " << sphere.getVertexCount() << std::ends;
     drawString(ss.str().c_str(), 1, screenHeight-(4*TEXT_HEIGHT), color, font);
     ss.str("");
 
-    ss << "Index Count: " << sphere2.getIndexCount() << std::ends;
+    ss << "Index Count: " << sphere.getIndexCount() << std::ends;
     drawString(ss.str().c_str(), 1, screenHeight-(5*TEXT_HEIGHT), color, font);
     ss.str("");
 
@@ -489,52 +508,22 @@ void displayCB()
     // line color
     float lineColor[] = {0.2f, 0.2f, 0.2f, 1};
 
-    // draw left flat sphere with lines
-    glPushMatrix();
-    glTranslatef(-2.5f, 0, 0);
-    glRotatef(cameraAngleX, 1, 0, 0);   // pitch
-    glRotatef(cameraAngleY, 0, 1, 0);   // heading
-    glBindTexture(GL_TEXTURE_2D, 0);
-    sphere1.drawWithLines(lineColor);
-    //sphere1.drawLines(lineColor);
-    glPopMatrix();
-
-    // draw centre smooth sphere with line
+    // draw sphere with texture
     glMaterialfv(GL_FRONT, GL_DIFFUSE, diffuse); // reset diffuse
     glPushMatrix();
-    glRotatef(cameraAngleX, 1, 0, 0);
-    glRotatef(cameraAngleY, 0, 1, 0);
-    glBindTexture(GL_TEXTURE_2D, 0);
-    sphere2.drawWithLines(lineColor);
-    glPopMatrix();
-
-    // draw right sphere with texture
-    glMaterialfv(GL_FRONT, GL_DIFFUSE, diffuse); // reset diffuse
-    glPushMatrix();
-    glTranslatef(2.5f, 0, 0);
+    glTranslatef(0, 0, 0);
     glRotatef(cameraAngleX, 1, 0, 0);
     glRotatef(cameraAngleY, 0, 1, 0);
     glBindTexture(GL_TEXTURE_2D, texId);
-    sphere2.draw();
+    sphere.draw();
     glPopMatrix();
-
-    /*
-    // using GLU quadric object
-    GLUquadricObj* obj = gluNewQuadric();
-    gluQuadricDrawStyle(obj, GLU_FILL); // GLU_FILL, GLU_LINE, GLU_SILHOUETTE, GLU_POINT
-    gluQuadricNormals(obj, GL_SMOOTH);
-    gluQuadricTexture(obj, GL_TRUE);
-    glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_SPHERE_MAP);
-    glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_SPHERE_MAP);
-    gluSphere(obj, 2.0, 50, 50); // radius, slice, stack
-    */
 
     glBindTexture(GL_TEXTURE_2D, 0);
 
     showInfo();     // print max range of glDrawRangeElements
 
     glPopMatrix();
-
+    drawButton(myButton, -0.5, 0, 1, 0.5);
     glutSwapBuffers();
 }
 
@@ -565,47 +554,46 @@ void timerCB(int millisec)
     glutPostRedisplay();
 }
 
-
 void keyboardCB(unsigned char key, int x, int y)
 {
-    switch(key)
+    switch (key)
     {
-    case 27: // ESCAPE
-        clearSharedMem();
-        exit(0);
+    case '1':
+        texId = loadTexture("earth_daymap.bmp", true);
         break;
-
-    case 'd': // switch rendering modes (fill -> wire -> point)
-    case 'D':
-        ++drawMode;
-        drawMode %= 3;
-        if(drawMode == 0)        // fill mode
-        {
-            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-            glEnable(GL_DEPTH_TEST);
-            glEnable(GL_CULL_FACE);
-        }
-        else if(drawMode == 1)  // wireframe mode
-        {
-            glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-            glDisable(GL_DEPTH_TEST);
-            glDisable(GL_CULL_FACE);
-        }
-        else                    // point mode
-        {
-            glPolygonMode(GL_FRONT_AND_BACK, GL_POINT);
-            glDisable(GL_DEPTH_TEST);
-            glDisable(GL_CULL_FACE);
-        }
+    case '2':
+        texId = loadTexture("earth_nightmap.bmp", true);
         break;
-
-    case ' ':
-        sphere1.reverseNormals();
-        sphere2.reverseNormals();
+    case '3':
+        texId = loadTexture("earth_clouds.bmp", true);
         break;
-
-    default:
-        ;
+    case '4':
+        texId = loadTexture("jupiter.bmp", true);
+        break;
+    case '5':
+        texId = loadTexture("mars.bmp", true);
+        break;
+    case '6':
+        texId = loadTexture("saturn.bmp", true);
+        break;
+    case '7':
+        texId = loadTexture("venus_atmosphere.bmp", true);
+        break;
+    case '8':
+        texId = loadTexture("venus_surface.bmp", true);
+        break;
+    case '9':
+        texId = loadTexture("mercury.bmp", true);
+        break;
+    case '0':
+        texId = loadTexture("neptune.bmp", true);
+        break;
+    case '-':
+        texId = loadTexture("uranus.bmp", true);
+        break;
+    case '=':
+        texId = loadTexture("moon.bmp", true);
+        break;
     }
 }
 

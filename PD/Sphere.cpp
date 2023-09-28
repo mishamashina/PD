@@ -1,16 +1,3 @@
-///////////////////////////////////////////////////////////////////////////////
-// Sphere.cpp
-// ==========
-// Sphere for OpenGL with (radius, sectors, stacks)
-// The min number of sectors is 3 and the min number of stacks are 2.
-// The default up axis is +Z axis. You can change the up axis with setUpAxis():
-// X=1, Y=2, Z=3.
-//
-//  AUTHOR: Song Ho Ahn (song.ahn@gmail.com)
-// CREATED: 2017-11-01
-// UPDATED: 2023-03-11
-///////////////////////////////////////////////////////////////////////////////
-
 #ifdef _WIN32
 #include <windows.h>    // include windows.h to avoid thousands of compile errors even though this class is not depending on Windows
 #endif
@@ -181,75 +168,6 @@ void Sphere::draw() const
     glDisableClientState(GL_NORMAL_ARRAY);
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 }
-
-
-
-///////////////////////////////////////////////////////////////////////////////
-// draw lines only
-// the caller must set the line width before call this
-///////////////////////////////////////////////////////////////////////////////
-void Sphere::drawLines(const float lineColor[4]) const
-{
-    // set line colour
-    glColor4fv(lineColor);
-    glMaterialfv(GL_FRONT, GL_DIFFUSE,   lineColor);
-
-    // draw lines with VA
-    glDisable(GL_LIGHTING);
-    glDisable(GL_TEXTURE_2D);
-    glEnableClientState(GL_VERTEX_ARRAY);
-    glVertexPointer(3, GL_FLOAT, 0, vertices.data());
-
-    glDrawElements(GL_LINES, (unsigned int)lineIndices.size(), GL_UNSIGNED_INT, lineIndices.data());
-
-    glDisableClientState(GL_VERTEX_ARRAY);
-    glEnable(GL_LIGHTING);
-    glEnable(GL_TEXTURE_2D);
-}
-
-
-
-///////////////////////////////////////////////////////////////////////////////
-// draw a sphere surfaces and lines on top of it
-// the caller must set the line width before call this
-///////////////////////////////////////////////////////////////////////////////
-void Sphere::drawWithLines(const float lineColor[4]) const
-{
-    glEnable(GL_POLYGON_OFFSET_FILL);
-    glPolygonOffset(1.0, 1.0f); // move polygon backward
-    this->draw();
-    glDisable(GL_POLYGON_OFFSET_FILL);
-
-    // draw lines with VA
-    drawLines(lineColor);
-}
-
-
-
-/*@@ FIXME: when the radius  = 0
-///////////////////////////////////////////////////////////////////////////////
-// update vertex positions only
-///////////////////////////////////////////////////////////////////////////////
-void Sphere::updateRadius()
-{
-    float scale = sqrtf(radius * radius / (vertices[0] * vertices[0] + vertices[1] * vertices[1] + vertices[2] * vertices[2]));
-
-    std::size_t i, j;
-    std::size_t count = vertices.size();
-    for(i = 0, j = 0; i < count; i += 3, j += 8)
-    {
-        vertices[i]   *= scale;
-        vertices[i+1] *= scale;
-        vertices[i+2] *= scale;
-
-        // for interleaved array
-        interleavedVertices[j]   *= scale;
-        interleavedVertices[j+1] *= scale;
-        interleavedVertices[j+2] *= scale;
-    }
-}
-*/
-
 
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -1,23 +1,3 @@
-// Bmp.h
-// =====
-// BMP image loader
-// It reads only 8/24/32-bit uncompressed and 8-bit RLE compression format.
-//
-// 2022-09-28: Added BITFIELDS=3 compression mode (RGBA with bit masks)
-// 2019-07-20: Fixed clearing memory in getColorCount()
-// 2018-08-10: Fixed dealloc memory in save()
-// 2016-11-09: Fixed errors when height < 0 in read()/save().
-// 2013-03-23: Changed the type of dataSize to std::size_t for 64bit support.
-// 2006-10-17: Improved flipImage()
-// 2006-10-10: Added getError() to return the last error message.
-// 2006-10-07: Fixed handling paddings if the width is not divisible by 4.
-// 2006-09-25: Added 8-bit grayscale read and save (it is indexed mode).
-//
-//  AUTHOR: Song Ho Ahn (song.ahn@gmail.com)
-// CREATED: 2006-05-08
-// UPDATED: 2022-09-30
-///////////////////////////////////////////////////////////////////////////////
-
 #ifndef IMAGE_BMP_H
 #define IMAGE_BMP_H
 
