@@ -16,9 +16,10 @@
 void displayCB();
 void reshapeCB(int w, int h);
 void timerCB(int millisec);
-void mouseCB(int button, int stat, int x, int y);
-void mouseMotionCB(int x, int y);
+//void mouseCB(int button, int stat, int x, int y);
+//void mouseMotionCB(int x, int y);
 void keyboardCB(unsigned char key, int x, int y);
+void SkeyboardCB(int key, int x, int y);
 
 void initGL();
 int  initGLUT(int argc, char **argv);
@@ -108,8 +109,9 @@ int initGLUT(int argc, char **argv)
     glutTimerFunc(33, timerCB, 33);             // redraw only every given millisec
     glutKeyboardFunc(keyboardCB);
     glutReshapeFunc(reshapeCB);
-    glutMouseFunc(mouseCB);
-    glutMotionFunc(mouseMotionCB);
+    //glutMouseFunc(mouseCB);
+    //glutMotionFunc(mouseMotionCB);
+    glutSpecialFunc(SkeyboardCB);
 
     return handle;
 }
@@ -567,6 +569,18 @@ void keyboardCB(unsigned char key, int x, int y)
     float color[4] = { 1, 1, 1, 1 };
     switch (key)
     {
+
+    case '+':
+        cameraDistance -= (y + mouseY) * 0.001f;
+        mouseY = y;
+        std::cout << "+" << std::endl;
+        break;
+
+    case '-':
+        cameraDistance += (y + mouseY) * 0.001f;
+        mouseY = y;
+        break;
+
     case '1':
         texId = loadTexture("earth_daymap.bmp", true);
         i = 0;
@@ -607,67 +621,96 @@ void keyboardCB(unsigned char key, int x, int y)
         texId = loadTexture("neptune.bmp", true);
         i = 9;
         break;
-    case '-':
-        texId = loadTexture("uranus.bmp", true);
-        i = 10;
-        break;
-    case '=':
-        texId = loadTexture("moon.bmp", true);
-        i = 11;
-        break;
+    //case '-':
+    //    texId = loadTexture("uranus.bmp", true);
+    //    i = 10;
+    //    break;
+    //case '=':
+    //    texId = loadTexture("moon.bmp", true);
+    //    i = 11;
+    //    break;
     }
 }
 
-
-void mouseCB(int button, int state, int x, int y)
+void SkeyboardCB(int key, int x, int y)
 {
-    mouseX = x;
-    mouseY = y;
-
-    if(button == GLUT_LEFT_BUTTON)
+    switch (key)
     {
-        if(state == GLUT_DOWN)
-        {
-            mouseLeftDown = true;
-        }
-        else if(state == GLUT_UP)
-            mouseLeftDown = false;
-    }
+    
+        case GLUT_KEY_UP:
+            cameraAngleX += (y - mouseY) * 0.01f;
+            std::cout << "UP" << std::endl;
+            mouseX = x;
+            break;
 
-    else if(button == GLUT_RIGHT_BUTTON)
-    {
-        if(state == GLUT_DOWN)
-        {
-            mouseRightDown = true;
-        }
-        else if(state == GLUT_UP)
-            mouseRightDown = false;
-    }
+        case GLUT_KEY_DOWN:
+            cameraAngleX -= (y - mouseY) * 0.01f;
+            std::cout << "DOWN" << std::endl;
+            mouseX = x;
+            break;
 
-    else if(button == GLUT_MIDDLE_BUTTON)
-    {
-        if(state == GLUT_DOWN)
-        {
-            mouseMiddleDown = true;
-        }
-        else if(state == GLUT_UP)
-            mouseMiddleDown = false;
+        case GLUT_KEY_LEFT:
+            cameraAngleY += (x - mouseX) * 0.005f;
+            std::cout << "LEFT" << std::endl;
+            mouseY = y;
+            break;
+        case GLUT_KEY_RIGHT:
+            cameraAngleY -= (x - mouseX) * 0.005f;
+            std::cout << "RIGHT" << std::endl;
+            mouseY = y;
+            break;
     }
 }
 
+//void mouseCB(int button, int state, int x, int y)
+//{
+//    mouseX = x;
+//    mouseY = y;
+//
+//    if(button == GLUT_LEFT_BUTTON)
+//    {
+//        if(state == GLUT_DOWN)
+//        {
+//            mouseLeftDown = true;
+//        }
+//        else if(state == GLUT_UP)
+//            mouseLeftDown = false;
+//    }
+//
+//    else if(button == GLUT_RIGHT_BUTTON)
+//    {
+//        if(state == GLUT_DOWN)
+//        {
+//            mouseRightDown = true;
+//        }
+//        else if(state == GLUT_UP)
+//            mouseRightDown = false;
+//    }
+//
+//    else if(button == GLUT_MIDDLE_BUTTON)
+//    {
+//        if(state == GLUT_DOWN)
+//        {
+//            mouseMiddleDown = true;
+//        }
+//        else if(state == GLUT_UP)
+//            mouseMiddleDown = false;
+//    }
+//}
 
-void mouseMotionCB(int x, int y)
-{
-    if(mouseLeftDown)
-    {
-        cameraAngleY += (x - mouseX);
-        cameraAngleX += (y - mouseY);
-        mouseX = x;
-        mouseY = y;
-    }
-    if(mouseRightDown)
-    {
-        cameraDistance -= (y - mouseY) * 0.2f;
-        mouseY = y;
-    }
-}
+
+//void mouseMotionCB(int x, int y)
+//{
+//    if(mouseLeftDown)
+//    {
+//        cameraAngleY += (x - mouseX);
+//        cameraAngleX += (y - mouseY);
+//        mouseX = x;
+//        mouseY = y;
+//    }
+//    if(mouseRightDown)
+//    {
+//        //cameraDistance -= (y - mouseY) * 0.2f;
+//        //mouseY = y;
+//    }
+//}
