@@ -11,6 +11,7 @@
 #include "Bmp.h"
 #include "Sphere.h"
 #include <windows.h>
+using namespace std;
 
 // GLUT CALLBACK functions
 void displayCB();
@@ -20,6 +21,8 @@ void timerCB(int millisec);
 //void mouseMotionCB(int x, int y);
 void keyboardCB(unsigned char key, int x, int y);
 void SkeyboardCB(int key, int x, int y);
+//void SkeyboardCB1(int key, int x, int y);
+//void keyboardCB1(const char* fName, int i);
 
 void initGL();
 int  initGLUT(int argc, char **argv);
@@ -34,6 +37,9 @@ void toOrtho();
 void toPerspective();
 GLuint loadTexture(const char* fileName, bool wrap=true);
 void showInfo();
+
+void loadFiles();
+
 // constants
 const int   SCREEN_WIDTH    = 500;
 const int   SCREEN_HEIGHT   = 500;
@@ -41,6 +47,7 @@ const float CAMERA_DISTANCE = 4.0f;
 const int   TEXT_WIDTH      = 8;
 const int   TEXT_HEIGHT     = 13;
 int i = -1;
+int flag = 0;
 
 // global variables
 void *font = GLUT_BITMAP_8_BY_13;
@@ -57,6 +64,9 @@ int drawMode;
 GLuint texId;
 int imageWidth;
 int imageHeight;
+string masloadFiles[10] = {};
+
+
 
 // sphere: min sector = 3, min stack = 2
 Sphere sphere(1.0f, 36, 18, true,  2);    // radius, sectors, stacks, smooth(default), Y-up
@@ -71,16 +81,38 @@ int main(int argc, char **argv)
     // init GLUT and GL
     initGLUT(argc, argv);
     initGL();
-
+    //loadFiles();
+    //texId = loadTexture("earth_daymap.bmp", true);
+ 
     // the last GLUT call (LOOP)
     // window will be shown and display callback is triggered by events
     // NOTE: this call never return main().
     glutMainLoop(); /* Start GLUT event-processing loop */
 
+
     return 0;
 }
 
+void loadFiles()
+{
+    //string masloadFiles[2] = {};
+    //cout << "Enter file name:" << endl;
+    //cin >> masloadFiles[0] >> masloadFiles[1];
+    //cout << masloadFiles[0] << " " << masloadFiles[1];
+    //for (int i = 0; i <= 1; i++)
+    //{
+    //    texId = loadTexture(masloadFiles[i].c_str(), true);
+    //}
+    //texId = loadTexture(masloadFiles[0].c_str(), true);
 
+    //for (int i = 0; i <= 1; i++)
+    //{
+    //    cout << "Enter file name:" << endl;
+    //    cin >> masloadFiles[i];
+    //    cout << masloadFiles[i] << endl;
+    //    loadTexture(masloadFiles[i].c_str(), true);
+    //}
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 // initialize GLUT for windowing
@@ -112,6 +144,8 @@ int initGLUT(int argc, char **argv)
     //glutMouseFunc(mouseCB);
     //glutMotionFunc(mouseMotionCB);
     glutSpecialFunc(SkeyboardCB);
+    //glutSpecialFunc(SkeyboardCB1);
+    //glutKeyboardFunc(keyboardCB1);
 
     return handle;
 }
@@ -357,7 +391,10 @@ void showInfo()
     std::stringstream ss;
     ss << std::fixed << std::setprecision(3);
 
-    if (i == 0)
+    //ss << "Picture: " << fName << std::ends;
+    //drawString(ss.str().c_str(), 1, screenHeight - (1 * TEXT_HEIGHT), color, font);
+    //ss.str("");
+    /*if (i == 0)
     {
         ss << "Picture: " << "Earth_Daymap" << std::ends;
         drawString(ss.str().c_str(), 1, screenHeight - (1 * TEXT_HEIGHT), color, font);
@@ -428,7 +465,7 @@ void showInfo()
         ss << "Picture: " << "Moon" << std::ends;
         drawString(ss.str().c_str(), 1, screenHeight - (1 * TEXT_HEIGHT), color, font);
         ss.str("");
-    }
+    }*/
 
 
     // unset floating format
@@ -542,17 +579,17 @@ void reshapeCB(int w, int h)
     screenWidth = w;
     screenHeight = h;
     toPerspective();
-    std::cout << "window resized: " << w << " x " << h << std::endl;
+    //std::cout << "window resized: " << w << " x " << h << std::endl;
 
 #ifdef _WIN32
     HWND handle = ::GetActiveWindow();
     RECT rect;
-    ::GetWindowRect(handle, &rect); // with non-client area; border, titlebar etc.
-    std::cout << "=========================" << std::endl;
-    std::cout << "full window size with border: " << (rect.right - rect.left) << "x" << (rect.bottom - rect.top) << std::endl;
-    ::GetClientRect(handle, &rect); // only client dimension
-    std::cout << "client window size: " << (rect.right - rect.left) << "x" << (rect.bottom - rect.top) << std::endl;
-    std::cout << "=========================" << std::endl;
+    //::GetWindowRect(handle, &rect); // with non-client area; border, titlebar etc.
+    //std::cout << "=========================" << std::endl;
+    //std::cout << "full window size with border: " << (rect.right - rect.left) << "x" << (rect.bottom - rect.top) << std::endl;
+    //::GetClientRect(handle, &rect); // only client dimension
+    //std::cout << "client window size: " << (rect.right - rect.left) << "x" << (rect.bottom - rect.top) << std::endl;
+    //std::cout << "=========================" << std::endl;
 #endif
 }
 
@@ -565,11 +602,30 @@ void timerCB(int millisec)
 
 void keyboardCB(unsigned char key, int x, int y)
 {
-    std::stringstream ss;
+    if (flag == 0)
+    {
+        //int k;
+        //cout << "Enter the number of files:" << endl;
+        //cin >> k;
+        //for (int i = 0; i < k; i++)
+        //{
+        //    cout << "Enter the name of the file:" << endl;
+        //    cin >> masloadFiles[i];
+        //}
+        //------------------------//
+
+
+
+
+        //cout << "Enter the name of the files:" << endl;
+        //cin >> masloadFiles[0] >> masloadFiles[1] >> masloadFiles[2] >> masloadFiles[3] >> masloadFiles[4] >> masloadFiles[5] >> masloadFiles[6] >> masloadFiles[7] >> masloadFiles[8] >> masloadFiles[9];
+        //cout << masloadFiles[0] << " " << masloadFiles[1] << " " << masloadFiles[2];
+        flag = 1;
+    }   
     float color[4] = { 1, 1, 1, 1 };
     switch (key)
     {
-
+    
     case '+':
         cameraDistance -= (y + mouseY) * 0.001f;
         mouseY = y;
@@ -582,55 +638,87 @@ void keyboardCB(unsigned char key, int x, int y)
         break;
 
     case '1':
-        texId = loadTexture("earth_daymap.bmp", true);
-        i = 0;
+        if (masloadFiles[0].c_str() != 0){ texId = loadTexture(masloadFiles[0].c_str(), true);}
+        texId = loadTexture("neptune.bmp", true);
+        //showInfo(masloadFiles[0].c_str());
         break;
     case '2':
-        texId = loadTexture("earth_nightmap.bmp", true);
-        i = 1;
+        if (masloadFiles[1].c_str() != 0) { texId = loadTexture(masloadFiles[1].c_str(), true); }
+        //showInfo(masloadFiles[1].c_str());
         break;
     case '3':
-        texId = loadTexture("earth_clouds.bmp", true);
-        i = 2;
+        if (masloadFiles[2].c_str() != 0) { texId = loadTexture(masloadFiles[2].c_str(), true); }
         break;
     case '4':
-        texId = loadTexture("jupiter.bmp", true);
-        i = 3;
+        if (masloadFiles[3].c_str() != 0) { texId = loadTexture(masloadFiles[3].c_str(), true); }
         break;
     case '5':
-        texId = loadTexture("mars.bmp", true);
-        i = 4;
+        if (masloadFiles[4].c_str() != 0) { texId = loadTexture(masloadFiles[4].c_str(), true); }
         break;
     case '6':
-        texId = loadTexture("saturn.bmp", true);
-        i = 5;
+        if (masloadFiles[5].c_str() != 0) { texId = loadTexture(masloadFiles[5].c_str(), true); }
         break;
     case '7':
-        texId = loadTexture("venus_atmosphere.bmp", true);
-        i = 6;
+        if (masloadFiles[6].c_str() != 0) { texId = loadTexture(masloadFiles[6].c_str(), true); }
         break;
     case '8':
-        texId = loadTexture("venus_surface.bmp", true);
-        i = 7;
+        if (masloadFiles[7].c_str() != 0){ texId = loadTexture(masloadFiles[7].c_str(), true);}
         break;
     case '9':
-        texId = loadTexture("mercury.bmp", true);
-        i = 8;
+        if (masloadFiles[8].c_str() != 0) { texId = loadTexture(masloadFiles[8].c_str(), true); }
         break;
     case '0':
-        texId = loadTexture("neptune.bmp", true);
-        i = 9;
+        if (masloadFiles[9].c_str() != 0) { texId = loadTexture(masloadFiles[9].c_str(), true); }
         break;
-    //case '-':
-    //    texId = loadTexture("uranus.bmp", true);
-    //    i = 10;
-    //    break;
-    //case '=':
-    //    texId = loadTexture("moon.bmp", true);
-    //    i = 11;
-    //    break;
     }
 }
+
+//void keyboardCB1(const char* fName, int i)
+//{
+//    switch (i)
+//    {
+//       case 1:
+//           texId = loadTexture(fName, true);
+//           key = 
+//           break;
+//       case 2:
+//           texId = loadTexture(fName, true);
+//           break;
+//       /*case '3':
+//           texId = loadTexture("earth_clouds.bmp", true);
+//           i = 2;
+//           break;
+//       case '4':
+//           texId = loadTexture("jupiter.bmp", true);
+//           i = 3;
+//           break;
+//       case '5':
+//           texId = loadTexture("mars.bmp", true);
+//           i = 4;
+//           break;
+//       case '6':
+//           texId = loadTexture("saturn.bmp", true);
+//           i = 5;
+//           break;
+//       case '7':
+//           texId = loadTexture("venus_atmosphere.bmp", true);
+//           i = 6;
+//           break;
+//       case '8':
+//           texId = loadTexture("venus_surface.bmp", true);
+//           i = 7;
+//           break;
+//       case '9':
+//           texId = loadTexture("mercury.bmp", true);
+//           i = 8;
+//           break;
+//       case '0':
+//           texId = loadTexture("neptune.bmp", true);
+//           i = 9;
+//           break;*/
+//    }
+//}
+
 
 void SkeyboardCB(int key, int x, int y)
 {
@@ -640,24 +728,24 @@ void SkeyboardCB(int key, int x, int y)
         case GLUT_KEY_UP:
             cameraAngleX += (y - mouseY) * 0.01f;
             std::cout << "UP" << std::endl;
-            mouseX = x;
+            mouseX = 0;
             break;
 
         case GLUT_KEY_DOWN:
             cameraAngleX -= (y - mouseY) * 0.01f;
             std::cout << "DOWN" << std::endl;
-            mouseX = x;
+            mouseX = 0;
             break;
 
         case GLUT_KEY_LEFT:
             cameraAngleY += (x - mouseX) * 0.005f;
             std::cout << "LEFT" << std::endl;
-            mouseY = y;
+            mouseY = 0;
             break;
         case GLUT_KEY_RIGHT:
             cameraAngleY -= (x - mouseX) * 0.005f;
             std::cout << "RIGHT" << std::endl;
-            mouseY = y;
+            mouseY = 0;
             break;
     }
 }
